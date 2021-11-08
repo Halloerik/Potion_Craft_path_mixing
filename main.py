@@ -41,9 +41,7 @@ def average_ingredients(ingredients, segments=100):
 
 
 selected_ingredients = [waterbloom, terraria]
-
-
-# selected_ingredients = all_ingredients
+#selected_ingredients = all_ingredients
 
 def update_graph(plot_widget, first=None, second=None, segments=50):
     plot_widget.clear()
@@ -72,7 +70,7 @@ if __name__ == '__main__':
     plot_widget = pg.PlotWidget(None)
     v_box.addWidget(plot_widget)
 
-    mixed_path_segments = 1000
+    mixed_path_segments = 100
 
     drop_down_1 = QtWidgets.QComboBox()
     drop_down_1.addItems(all_ingredient_names)

@@ -9,10 +9,9 @@ class CubicBezierCurve:
         self.coordinates = self.bernstein_cubic_line()
         self.look_up_table = []
         self.generate_look_up_table()
-        self.length = self.look_up_table[-1][1]
+        self.length = self.look_up_table[-1]
 
     def bernstein_cubic_point(self, t):
-
         p0 = self.control_points[0] * (- t ** 3 + 3 * t ** 2 - 3 * t + 1)
         p1 = self.control_points[1] * (3 * t ** 3 - 6 * t ** 2 + 3 * t)
         p2 = self.control_points[2] * (-3 * t ** 3 + 3 * t ** 2)
@@ -34,33 +33,39 @@ class CubicBezierCurve:
         return p0 + p1 + p2 + p3
 
     def bernstein_cubic_line(self):
-        points = []
+        points = np.zeros((self.line_segments+1, 2))
         for t in range(self.line_segments + 1):
-            points.append(self.bernstein_cubic_point(t / self.line_segments))
+            points[t] = self.bernstein_cubic_point(t / self.line_segments)
 
-        return np.array(points)
+        return points
 
     def generate_look_up_table(self):
-        self.look_up_table = [[0, 0]]
+        self.look_up_table = np.zeros((self.line_segments+1))
         previous_point = self.bernstein_cubic_point(0)
         for t in range(1, self.line_segments + 1):
             current_point = self.bernstein_cubic_point(t / self.line_segments)
-            distance = np.linalg.norm(current_point - previous_point)
-            self.look_up_table.append([t / self.line_segments, distance])
+            distance = np.linalg.norm(current_point - previous_point)+self.look_up_table[t-1]
+            previous_point = current_point
+
+            self.look_up_table[t] = distance
 
     def get_distance(self, t):
         for i in range(1, self.line_segments + 1):
-            t1, d1 = self.look_up_table[i - 1]
-            t2, d2 = self.look_up_table[i]
+            t1 = (i-1)/self.line_segments
+            t2 = i/self.line_segments
             if t1 <= t <= t2:
+                d1 = self.look_up_table[i - 1]
+                d2 = self.look_up_table[i]
                 t = (t - t1) / (t2 - t1)
                 return d1 * t + d2 * (1 - t)
 
     def get_t(self, d):
         for i in range(1, self.line_segments + 1):
-            t1, d1 = self.look_up_table[i - 1]
-            t2, d2 = self.look_up_table[i]
+            d1 = self.look_up_table[i - 1]
+            d2 = self.look_up_table[i]
             if d1 <= d <= d2:
+                t1 = (i - 1) / self.line_segments
+                t2 = i / self.line_segments
                 d = (d - d1) / (d2 - d1)
                 return t1 * d + t2 * (1 - d)
 
