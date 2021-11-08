@@ -2,7 +2,7 @@ import numpy as np
 
 
 class CubicBezierCurve:
-    def __init__(self, control_points, line_segments=100):
+    def __init__(self, control_points, line_segments=1000):
         self.control_points = control_points
 
         self.line_segments = line_segments
@@ -44,10 +44,9 @@ class CubicBezierCurve:
         self.look_up_table = [[0, 0]]
         previous_point = self.bernstein_cubic_point(0)
         for t in range(1, self.line_segments + 1):
-            current_point = self.bernstein_cubic_point(t / (self.line_segments))
+            current_point = self.bernstein_cubic_point(t / self.line_segments)
             distance = np.linalg.norm(current_point - previous_point)
-            self.look_up_table.append([t/ (self.line_segments), distance])
-
+            self.look_up_table.append([t / self.line_segments, distance])
 
     def get_distance(self, t):
         for i in range(1, self.line_segments + 1):
@@ -66,9 +65,8 @@ class CubicBezierCurve:
                 return t1 * d + t2 * (1 - d)
 
 
-
 class BezierCurve:
-    def __init__(self, curves, line_segments=100):
+    def __init__(self, curves, line_segments=1000):
         self.curves = [CubicBezierCurve(curve, line_segments) for curve in curves]
 
         self.line_segments = line_segments
@@ -80,21 +78,18 @@ class BezierCurve:
 
     def get_t(self, d):
         for curve in self.curves:
-            #print("d:",d, "curve length:", curve.length)
             if d - curve.length <= 0:
                 t = curve.get_t(d)
-                #print("t",t,"\n")
                 return curve, t
             else:
                 d -= curve.length
         return self.curves[-1], 1
 
     def get_d_percentage(self, p):
-        return p * self.length  
+        return p * self.length
 
     def get_coordinate(self, t):
         d = self.get_d_percentage(t)
-        #print(d)
         curve, t = self.get_t(d)
         return curve.bernstein_cubic_point(t)
 
@@ -102,6 +97,6 @@ class BezierCurve:
 def add_curves(curves: BezierCurve, segments=100):
     coordinates = np.zeros((segments + 1, 2))
     for i in range(1, segments + 1):
-        sum_ = sum(curve.get_coordinate(i / (segments)) for curve in curves)
-        coordinates[i] = sum_ #/ len(curves)
+        sum_ = sum([curve.get_coordinate(i / segments) for curve in curves])
+        coordinates[i] = sum_
     return coordinates

@@ -121,11 +121,69 @@ goldthorn = np.array([
 witch_mushroom = np.array([
     [[0, 0], [0, 4], [5, 1], [5, 5]]])
 
+grave_truffle = np.array([
+    [[0.0, 0.0], [0.0, 0.0], [-3.0, -2.0], [-3.0, -2.0]],
+    [[-3.0, -2.0], [-3.0, -2.0], [-0.8, -7.0], [-0.8, -7.0]],
+    [[-0.8, -7.0], [-0.7, -7.0], [0.7, -7.0], [0.8, -7.0]],
+    [[0.8, -7.0], [0.8, -7.0], [3.0, -2.0], [3.0, -2.0]],
+    [[3.0, -2.0], [3.0, -2.0], [0.0, -1.3], [0.0, -1.3]],
+    [[0.0, -1.3], [0.0, -1.3], [0.0, -5.0], [0.0, -5.0]]])
+
+lumpy_beet = np.array([
+    [[0.0, 0.0], [0.0, 2.0], [3.0, 1.0], [3.0, 3.0]],
+    [[3.0, 3.0], [3.0, 4.0], [1.0, 4.0], [1.0, 3.0]],
+    [[1.0, 3.0], [1.0, 2.0], [1.0, 1.0], [1.0, 0.0]],
+    [[1.0, 0.0], [1.0, -1.0], [3.0, -1.0], [3.0, 0.0]],
+    [[3.0, 0.0], [3.0, 1.0], [3.0, 2.0], [4.0, 2.0]]])
+
+red_mushroom = np.array([
+    [[0.0, 0.0], [-4.0, 4.0], [-4.0, -4.0], [-8.0, 0.0]]])
+
+blood_ruby = np.array([
+    [[0.0, 0.0], [0.0, 0.0], [-3.0, -3.0], [-3.0, -3.0]],
+    [[-3.0, -3.0], [-3.0, -3.0], [-3.0, 3.0], [-3.0, 3.0]],
+    [[-3.0, 3.0], [-3.0, 3.0], [-6.0, 0.0], [-6.0, 0.0]]])
+
+cloud_crystal = np.array([
+    [[0.0, 0.0], [0.0, 0.0], [-0.8, 1.0], [0.0, 1.5]],
+    [[0.0, 1.5], [0.7, 2.0], [1.0, 2.0], [1.0, 2.8]],
+    [[1.0, 2.8], [1.0, 3.8], [-1.0, 3.3], [-1.0, 4.3]],
+    [[-1.0, 4.3], [-1.0, 5.0], [-0.8, 5.0], [0.0, 5.5]],
+    [[0.0, 5.5], [0.7, 6.0], [0.0, 7.0], [0.0, 7.0]]])
+
+earth_pyrite = np.array([
+    [[0.0, 0.0], [0.0, 0.0], [0.0, -1.5], [0.0, -1.5]],
+    [[0.0, -1.5], [0.0, -1.5], [-1.0, -1.5], [-1.0, -1.5]],
+    [[-1.0, -1.5], [-1.0, -1.5], [-1.0, -3.5], [-1.0, -3.5]],
+    [[-1.0, -3.5], [-1.0, -3.5], [1.0, -3.5], [1.0, -3.5]],
+    [[1.0, -3.5], [1.0, -3.5], [1.0, -5.5], [1.0, -5.5]],
+    [[1.0, -5.5], [1.0, -5.5], [0.0, -5.5], [0.0, -5.5]],
+    [[0.0, -5.5], [0.0, -5.5], [0.0, -7.0], [0.0, -7.0]]])
+
+fire_citrine = np.array([
+    [[0.0, 0.0], [0.0, 0.0], [-0.8, -1.5], [-1.5, 0.0]],
+    [[-1.5, 0.0], [-2.5, 2.0], [-2.8, -0.7], [-3.5, -0.8]],
+    [[-3.5, -0.8], [-4.3, -0.8], [-4.5, 2.0], [-5.5, 0.0]],
+    [[-5.5, 0.0], [-6.3, -1.5], [-7.0, 0.0], [-7.0, 0.0]]])
+
+frost_sapphire = np.array([
+    [[0.0, 0.0], [0.0, 0.0], [0.3, 0.5], [0.3, 0.5]],
+    [[0.3, 0.5], [0.3, 0.5], [1.0, -1.0], [1.0, -1.0]],
+    [[1.0, -1.0], [1.0, -1.0], [2.0, 1.0], [2.0, 1.0]],
+    [[2.0, 1.0], [2.0, 1.0], [3.0, -1.0], [3.0, -1.0]],
+    [[3.0, -1.0], [3.0, -1.0], [4.0, 1.0], [4.0, 1.0]],
+    [[4.0, 1.0], [4.0, 1.0], [5.0, -1.0], [5.0, -1.0]],
+    [[5.0, -1.0], [5.0, -1.0], [6.0, 1.0], [6.0, 1.0]],
+    [[6.0, 1.0], [6.0, 1.0], [6.8, -0.5], [6.8, -0.5]],
+    [[6.8, -0.5], [6.8, -0.5], [7.0, 0.0], [7.0, 0.0]]])
+
 all_ingredients = [waterbloom, terraria, firebell, windbloom, bloodthorn, brown_mushroom, tangleweed, green_mushroom,
                    dryads_saddle, shadow_chanterelle, hairy_banana, ice_fruit, goblin_shroom, marshroom, weirdshroom,
-                   thornstick, lava_root, sulphur_shelf, goldthorn, witch_mushroom, thunder_thistle]
+                   thornstick, lava_root, sulphur_shelf, goldthorn, witch_mushroom, thunder_thistle, grave_truffle,
+                   lumpy_beet, red_mushroom, blood_ruby, cloud_crystal, earth_pyrite, fire_citrine, frost_sapphire]
 
 all_ingredient_names = ["waterbloom", "terraria", "firebell", "windbloom", "bloodthorn", "brown_mushroom", "tangleweed",
                         "green_mushroom", "dryads_saddle", "shadow_chanterelle", "hairy_banana", "ice_fruit",
                         "goblin_shroom", "marshroom", "weirdshroom", "thornstick", "lava_root", "sulphur_shelf",
-                        "goldthorn", "witch_mushroom", "thunder_thistle"]
+                        "goldthorn", "witch_mushroom", "thunder_thistle", "grave_truffle", "lumpy_beet", "red_mushroom",
+                        "blood_ruby", "cloud_crystal", "earth_pyrite", "fire_citrine", "frost_sapphire"]
