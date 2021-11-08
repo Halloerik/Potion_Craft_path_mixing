@@ -57,7 +57,7 @@ def update_graph(plot_widget, first=None, second=None, segments=50):
     if second is not None:
         selected_ingredients[1] = all_ingredients[second]
 
-    # plot_ingredients(plot_widget, selected_ingredients)
+    plot_ingredients(plot_widget, selected_ingredients)
     plot_average_ingredient(plot_widget, selected_ingredients, segments)
 
 
