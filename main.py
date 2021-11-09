@@ -17,7 +17,7 @@ def plot_ingredients(plot_widget, ingredients, colors=None):
         else:
             pen = pg.mkPen(colors[i])
 
-        coords = bezier.BezierCurve(ingredient).coordinates
+        coords = ingredient.coordinates
 
         plot = plot_widget.plot(pen=pen)
         plot.setData(coords)
@@ -36,11 +36,10 @@ def plot_average_ingredient(plot_widget, ingredients, segments=100, color=None):
 
 
 def average_ingredients(ingredients, segments=100):
-    curves = [bezier.BezierCurve(ingredient) for ingredient in ingredients]
-    return bezier.add_curves(curves, segments)
+    return bezier.add_curves(ingredients, segments)
 
 
-selected_ingredients = [waterbloom, terraria]
+selected_ingredients = all_ingredients[:2]
 #selected_ingredients = all_ingredients
 
 def update_graph(plot_widget, first=None, second=None, segments=50):
