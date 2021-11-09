@@ -1,4 +1,4 @@
-# Potion_Craft_path_mixing
+# Potion Craft path mixing
 
 Experiments for combining bezier curves. This will be part of a mod for the game Potion Craft
 
