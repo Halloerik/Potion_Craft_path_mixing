@@ -1,14 +1,6 @@
 import numpy as np
 from bezier import BezierCurve
 
-bloodthorn = BezierCurve(np.array([
-    [[0.0, 0.0], [0.0, 0.0], [0.0, -2.0], [0.0, -2.0]],
-    [[0.0, -2.0], [0.0, -2.0], [-1.75, 1.0], [-1.75, 1.0]],
-    [[-1.75, 1.0], [-1.75, 1.0], [-1.75, -3.0], [-1.75, -3.0]],
-    [[-1.75, -3.0], [-1.75, -3.0], [-4.0, 2.0], [-4.0, 2.0]],
-    [[-4.0, 2.0], [-4.0, 2.0], [-4.0, -4.0], [-4.0, -4.0]],
-    [[-4.0, -4.0], [-4.0, -4.0], [-6.0, 0.0], [-6.0, 0.0]]]))
-
 waterbloom = BezierCurve(np.array([
     [[0.0, 0.0], [0.25, -0.5], [1.0, -0.5], [1.25, 0.0]],
     [[1.25, 0.0], [1.5, 0.5], [2.25, 0.5], [2.5, 0.0]],
@@ -34,6 +26,13 @@ windbloom = BezierCurve(np.array([
     [[0, 0], [0, 0], [1, 2.5], [1, 2.5]],
     [[1, 2.5], [1, 2.5], [-1, 2.5], [-1, 2.5]],
     [[-1, 2.5], [-1, 2.5], [0, 5], [0, 5]]]))
+bloodthorn = BezierCurve(np.array([
+    [[0.0, 0.0], [0.0, 0.0], [0.0, -2.0], [0.0, -2.0]],
+    [[0.0, -2.0], [0.0, -2.0], [-1.75, 1.0], [-1.75, 1.0]],
+    [[-1.75, 1.0], [-1.75, 1.0], [-1.75, -3.0], [-1.75, -3.0]],
+    [[-1.75, -3.0], [-1.75, -3.0], [-4.0, 2.0], [-4.0, 2.0]],
+    [[-4.0, 2.0], [-4.0, 2.0], [-4.0, -4.0], [-4.0, -4.0]],
+    [[-4.0, -4.0], [-4.0, -4.0], [-6.0, 0.0], [-6.0, 0.0]]]))
 
 brown_mushroom = BezierCurve(np.array([
     [[0, 0], [0, -1], [0, -1], [-1, -1]],
@@ -183,10 +182,11 @@ all_ingredients = [waterbloom, terraria, firebell, windbloom, bloodthorn, brown_
                    thornstick, lava_root, sulphur_shelf, goldthorn, witch_mushroom, thunder_thistle, grave_truffle,
                    lumpy_beet, red_mushroom, blood_ruby, cloud_crystal, earth_pyrite, fire_citrine, frost_sapphire]
 
-
-
 all_ingredient_names = ["waterbloom", "terraria", "firebell", "windbloom", "bloodthorn", "brown_mushroom", "tangleweed",
                         "green_mushroom", "dryads_saddle", "shadow_chanterelle", "hairy_banana", "ice_fruit",
                         "goblin_shroom", "marshroom", "weirdshroom", "thornstick", "lava_root", "sulphur_shelf",
                         "goldthorn", "witch_mushroom", "thunder_thistle", "grave_truffle", "lumpy_beet", "red_mushroom",
                         "blood_ruby", "cloud_crystal", "earth_pyrite", "fire_citrine", "frost_sapphire"]
+
+# all_ingredients = [waterbloom, terraria]
+# all_ingredient_names = ["waterbloom", "terraria"]
