@@ -5,6 +5,7 @@ from ingredient import *
 import random
 from PyQt5 import QtGui, QtCore, QtWidgets
 import sys
+from gui import IngredientSelectionWidget
 
 pg.setConfigOption('background', 'w')
 pg.setConfigOption('foreground', 'k')
@@ -31,13 +32,13 @@ def plot_ingredients(plot_widget, ingredients, colors=None, grind_levels=None):
         plot_dashed.setData(coords_unground)
 
 
-def plot_average_ingredient(plot_widget, ingredients, grind_levels=None, segments=100, color=None):
+def plot_average_ingredient(plot_widget, ingredients, grind_levels=None, segments=1000, color=None):
     if color is None:
-        color= (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+        color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
     pen = pg.mkPen(color)
     pen_dashed = pg.mkPen(color, style=QtCore.Qt.PenStyle.DashLine)
 
-    grinded_coords,unground_coords = average_ingredients(ingredients, grind_levels, segments)
+    grinded_coords, unground_coords = average_ingredients(ingredients, grind_levels, segments)
 
     plot = plot_widget.plot(pen=pen)
     plot.setData(grinded_coords)
@@ -45,7 +46,8 @@ def plot_average_ingredient(plot_widget, ingredients, grind_levels=None, segment
     plot_dashed = plot_widget.plot(pen=pen_dashed)
     plot_dashed.setData(unground_coords)
 
-def average_ingredients(ingredients, grind_levels, segments=100):
+
+def average_ingredients(ingredients, grind_levels, segments=1000):
     return bezier.add_curves(ingredients, grind_levels, segments)
 
 
@@ -62,13 +64,12 @@ def update_gui_parameters(**kwargs):
         gui_parameters[k] = v
 
 
-def update_graph(plot_widget, segments=100, **kwargs):
-
+def update_graph(plot_widget, segments=1000, **kwargs):
     update_gui_parameters(**kwargs)
 
     plot_widget.clear()
-    #plot_widget.setXRange(-8, 2)
-    #plot_widget.setYRange(-8, 2)
+    # plot_widget.setXRange(-8, 2)
+    # plot_widget.setYRange(-8, 2)
 
     plot_widget.addItem(pg.InfiniteLine(angle=90, pen=pg.mkPen(127, 127, 127)))
     plot_widget.addItem(pg.InfiniteLine(angle=0, pen=pg.mkPen(127, 127, 127)))
@@ -96,34 +97,23 @@ if __name__ == '__main__':
     plot_widget.setXRange(-10, 10)
     plot_widget.setYRange(-10, 10)
     plot_widget.setAspectLocked(True)
-    grid_layout.addWidget(plot_widget, 0, 0, 1, 2)
+    grid_layout.addWidget(plot_widget, 0, 0, 1, 1)
 
-    mixed_path_segments = 100
+    first_ingredient_widget = IngredientSelectionWidget(0,1)
+    first_ingredient_widget.selected_ingredient_changed.connect(
+        lambda x: update_graph(plot_widget, first_ingredient=x))
+    first_ingredient_widget.grind_amount_changed.connect(
+        lambda x: update_graph(plot_widget, first_grind=x / 100))
+    grid_layout.addWidget(first_ingredient_widget, 1,0)
 
-    drop_down_1 = QtWidgets.QComboBox()
-    drop_down_1.addItems(all_ingredient_names)
-    drop_down_1.currentIndexChanged.connect(lambda x: update_graph(plot_widget, first_ingredient=x))
-    grid_layout.addWidget(drop_down_1, 1, 0)
 
-    horizontal_slider_1 = QtWidgets.QSlider(QtCore.Qt.Orientation.Horizontal)
-    horizontal_slider_1.setMinimum(0)
-    horizontal_slider_1.setMaximum(100)
-    horizontal_slider_1.setSliderPosition(100)
-    horizontal_slider_1.valueChanged.connect(lambda x: update_graph(plot_widget, first_grind=x / 100))
-    grid_layout.addWidget(horizontal_slider_1, 1, 1)
+    second_ingredient_widget = IngredientSelectionWidget(1,1)
+    second_ingredient_widget.selected_ingredient_changed.connect(
+        lambda x: update_graph(plot_widget, second_ingredient=x))
+    second_ingredient_widget.grind_amount_changed.connect(
+        lambda x: update_graph(plot_widget, second_grind=x / 100))
+    grid_layout.addWidget(second_ingredient_widget, 2, 0)
 
-    drop_down_2 = QtWidgets.QComboBox()
-    drop_down_2.addItems(all_ingredient_names)
-    drop_down_2.setCurrentIndex(1)
-    drop_down_2.currentIndexChanged.connect(lambda x: update_graph(plot_widget, second_ingredient=x))
-    grid_layout.addWidget(drop_down_2, 2, 0)
-
-    horizontal_slider_2 = QtWidgets.QSlider(QtCore.Qt.Orientation.Horizontal)
-    horizontal_slider_2.setMinimum(0)
-    horizontal_slider_2.setMaximum(100)
-    horizontal_slider_2.setSliderPosition(100)
-    horizontal_slider_2.valueChanged.connect(lambda x: update_graph(plot_widget, second_grind=x / 100))
-    grid_layout.addWidget(horizontal_slider_2, 2, 1)
 
     window.setLayout(grid_layout)
 

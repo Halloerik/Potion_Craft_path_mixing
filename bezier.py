@@ -122,7 +122,7 @@ class BezierCurve:
         return grinded_part, unground_part
 
 
-def add_curves(curves: List['BezierCurve'], grind_levels: list = None, segments=100):
+def add_curves(curves: List['BezierCurve'], grind_levels: list = None, segments=1000):
     """
 
     :param curves:
@@ -146,13 +146,13 @@ def add_curves(curves: List['BezierCurve'], grind_levels: list = None, segments=
         first_index = int(first_grinded.shape[0] * (i - 1) / segments)
         second_index = int(second_grinded.shape[0] * (i - 1) / segments)
 
-        grinded_coordinates[i] = (first_grinded[first_index] if first_grinded.shape[0] > 0 else np.zeros((1, 2))) \
-                                 + (second_grinded[second_index] if second_grinded.shape[0] > 0 else np.zeros((1, 2)))
+        grinded_coordinates[i] = (first_grinded[first_index] if first_grinded.shape[0] > 0 else np.zeros((1, 2))) + \
+                                 (second_grinded[second_index] if second_grinded.shape[0] > 0 else np.zeros((1, 2)))
 
         first_index = int((first_unground.shape[0]) * (i - 1) / segments)
         second_index = int((second_unground.shape[0]) * (i - 1) / segments)
         unground_coordinates[i] = first_unground[first_index] + second_unground[second_index]
-    unground_coordinates[0] = unground_coordinates[1]
+    unground_coordinates[0] = grinded_coordinates[-1]
     return grinded_coordinates, unground_coordinates
 
 
