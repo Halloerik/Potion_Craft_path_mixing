@@ -32,13 +32,13 @@ def plot_ingredients(plot_widget, ingredients, colors=None, grind_levels=None):
         plot_dashed.setData(coords_unground)
 
 
-def plot_average_ingredient(plot_widget, ingredients, grind_levels=None, segments=1000, color=None):
+def plot_average_ingredient(plot_widget, ingredients, grind_levels=None, segments=100, color=None):
     if color is None:
         color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
     pen = pg.mkPen(color)
     pen_dashed = pg.mkPen(color, style=QtCore.Qt.PenStyle.DashLine)
 
-    grinded_coords, unground_coords = average_ingredients(ingredients, grind_levels, segments)
+    grinded_coords, unground_coords = bezier.add_curves(ingredients, grind_levels, segments)
 
     plot = plot_widget.plot(pen=pen)
     plot.setData(grinded_coords)
@@ -47,16 +47,11 @@ def plot_average_ingredient(plot_widget, ingredients, grind_levels=None, segment
     plot_dashed.setData(unground_coords)
 
 
-def average_ingredients(ingredients, grind_levels, segments=1000):
-    return bezier.add_curves(ingredients, grind_levels, segments)
-
-
 selected_ingredients = all_ingredients[:2]
 # selected_ingredients = all_ingredients
-gui_parameters = {"first_ingredient": 0,
-                  "first_grind": 1,
-                  "second_ingredient": 1,
-                  "second_grind": 1}
+gui_parameters = {"first_ingredient": 0, "first_grind": 1,
+                  "second_ingredient": 1, "second_grind": 1,
+                  "combined_grind": 0}
 
 
 def update_gui_parameters(**kwargs):
@@ -64,7 +59,7 @@ def update_gui_parameters(**kwargs):
         gui_parameters[k] = v
 
 
-def update_graph(plot_widget, segments=1000, **kwargs):
+def update_graph(plot_widget, segments=100, **kwargs):
     update_gui_parameters(**kwargs)
 
     plot_widget.clear()
@@ -78,10 +73,11 @@ def update_graph(plot_widget, segments=1000, **kwargs):
     selected_ingredients[1] = all_ingredients[gui_parameters["second_ingredient"]]
     first_grind = gui_parameters["first_grind"]
     second_grind = gui_parameters["second_grind"]
+    combined_grind = gui_parameters["combined_grind"]
 
     plot_ingredients(plot_widget, selected_ingredients, colors=["b", (255, 165, 0)],
                      grind_levels=[first_grind, second_grind])
-    plot_average_ingredient(plot_widget, selected_ingredients, grind_levels=[first_grind, second_grind],
+    plot_average_ingredient(plot_widget, selected_ingredients, grind_levels=[first_grind, second_grind, combined_grind],
                             segments=segments, color=(0, 0, 0))
 
 
@@ -97,23 +93,29 @@ if __name__ == '__main__':
     plot_widget.setXRange(-10, 10)
     plot_widget.setYRange(-10, 10)
     plot_widget.setAspectLocked(True)
-    grid_layout.addWidget(plot_widget, 0, 0, 1, 1)
+    grid_layout.addWidget(plot_widget, 0, 0)
 
-    first_ingredient_widget = IngredientSelectionWidget(0,1)
+    first_ingredient_widget = IngredientSelectionWidget(0, 1)
     first_ingredient_widget.selected_ingredient_changed.connect(
         lambda x: update_graph(plot_widget, first_ingredient=x))
     first_ingredient_widget.grind_amount_changed.connect(
         lambda x: update_graph(plot_widget, first_grind=x / 100))
-    grid_layout.addWidget(first_ingredient_widget, 1,0)
+    grid_layout.addWidget(first_ingredient_widget, 1, 0)
 
-
-    second_ingredient_widget = IngredientSelectionWidget(1,1)
+    second_ingredient_widget = IngredientSelectionWidget(1, 1)
     second_ingredient_widget.selected_ingredient_changed.connect(
         lambda x: update_graph(plot_widget, second_ingredient=x))
     second_ingredient_widget.grind_amount_changed.connect(
         lambda x: update_graph(plot_widget, second_grind=x / 100))
     grid_layout.addWidget(second_ingredient_widget, 2, 0)
 
+    combined_slider = QtWidgets.QSlider(QtCore.Qt.Orientation.Horizontal)
+    combined_slider.setMinimum(0)
+    combined_slider.setMaximum(200)
+    combined_slider.setValue(0)
+    combined_slider.valueChanged.connect(
+        lambda x: update_graph(plot_widget, combined_grind=x / 100))
+    grid_layout.addWidget(combined_slider, 3, 0)
 
     window.setLayout(grid_layout)
 

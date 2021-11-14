@@ -58,8 +58,9 @@ class CubicBezierCurve:
             if t1 <= t <= t2:
                 d1 = self.look_up_table[i - 1]
                 d2 = self.look_up_table[i]
-                t = (t - t1) / (t2 - t1)
-                return d1 * t + d2 * (1 - t)
+                # t = (t - t1) / (t2 - t1)
+                # return d1 * t + d2 * (1 - t)
+                return lerp(t1, t2, t, d1, d2)
 
     def get_t(self, d):
         for i in range(1, self.line_segments + 1):
@@ -68,8 +69,9 @@ class CubicBezierCurve:
             if d1 <= d <= d2:
                 t1 = (i - 1) / self.line_segments
                 t2 = i / self.line_segments
-                d = (d - d1) / (d2 - d1)
-                return t1 * d + t2 * (1 - d)
+                # d = (d - d1) / (d2 - d1)
+                # return t1 * d + t2 * (1 - d)
+                return lerp(d1, d2, d, t1, t2)
 
 
 class BezierCurve:
@@ -77,11 +79,16 @@ class BezierCurve:
         self.curves = [CubicBezierCurve(curve, line_segments) for curve in curves]
 
         self.line_segments = line_segments
-        self.coordinates = self.curves[0].coordinates
-        # self.length = self.curves[0].length
-        for curve in self.curves[1:]:
-            self.coordinates = np.vstack((self.coordinates, curve.coordinates))
-            # self.length += curve.length
+        # self.coordinates = self.curves[0].coordinates
+        self.length = 0
+        for curve in self.curves:
+            # self.coordinates = np.vstack((self.coordinates, curve.coordinates))
+            self.length += curve.length
+
+        self.coordinates = np.zeros((line_segments + 1, 2))
+        for i in range(line_segments + 1):
+            self.coordinates[i] = self.get_coordinate(i / line_segments)
+
         self.length_at_coordinate = self.make_length_by_coordinate_table()
         self.length = self.length_at_coordinate[-1]
 
@@ -94,11 +101,8 @@ class BezierCurve:
                 d -= curve.length
         return self.curves[-1], 1
 
-    def get_d_percentage(self, p):
-        return p * self.length
-
-    def get_coordinate(self, t):
-        d = self.get_d_percentage(t)
+    def get_coordinate(self, p):
+        d = p * self.length
         curve, t = self.get_t(d)
         return curve.bernstein_cubic_point(t)
 
@@ -112,17 +116,18 @@ class BezierCurve:
     def get_grind_path(self, grind_percentage):
 
         grind_length = grind_percentage * self.length
-        grind_index, _ = find_closest(self.length_at_coordinate, grind_length)
+        left_index, left_length = find_closest(self.length_at_coordinate, grind_length)
+        right_index, right_length = (left_index + 1, self.length_at_coordinate[left_index + 1])
 
-        # print("total length:", self.length)
-        # print("grind_percentage:", grind_percentage, "grind_length:", grind_length, "grind_index:", grind_index)
+        middle_coordinate = lerp(left_length, right_length, grind_length,
+                                 self.coordinates[left_index], self.coordinates[right_index])
 
-        grinded_part = self.coordinates[:grind_index]
-        unground_part = self.coordinates[grind_index:]
+        grinded_part = np.vstack((self.coordinates[:left_index], middle_coordinate))
+        unground_part = np.vstack((middle_coordinate, self.coordinates[left_index:]))
         return grinded_part, unground_part
 
 
-def add_curves(curves: List['BezierCurve'], grind_levels: list = None, segments=1000):
+def add_curves(curves: List['BezierCurve'], grind_levels: list = None, segments=100):
     """
 
     :param curves:
@@ -134,24 +139,49 @@ def add_curves(curves: List['BezierCurve'], grind_levels: list = None, segments=
         grind_levels = [1.0, 1.0, 0]
     elif len(grind_levels) == 2:
         grind_levels.append(0)
+    elif len(grind_levels) == 3:
+        #grind_levels[2] = min(2 - (grind_levels[0]+grind_levels[1]),grind_levels[2])
+        grind_levels[0] += grind_levels[2]/2
+        grind_levels[1] += grind_levels[2]/2
+        if grind_levels[0]>1 and grind_levels[1]>1:
+            grind_levels[0] = 1
+            grind_levels[1] = 1
+        elif grind_levels[0]>1:
+            overgrinded = grind_levels[0] - 1
+            grind_levels[0] = 1
+            grind_levels[1] = min(grind_levels[1]+overgrinded, 1)
+        elif grind_levels[1]>1:
+            overgrinded = grind_levels[1] - 1
+            grind_levels[0] = min(grind_levels[0]+overgrinded, 1)
+            grind_levels[1] = 1
+
 
     first_grinded, first_unground = curves[0].get_grind_path(grind_levels[0])
     second_grinded, second_unground = curves[1].get_grind_path(grind_levels[1])
 
     grinded_coordinates = np.zeros((segments + 1, 2))
     unground_coordinates = np.zeros((segments + 1, 2))
+    zero = np.zeros((1, 2))
     for i in range(1, segments + 1):
         # print(i,"/",segments)
         # sum_ = sum([curve.get_coordinate(i / segments) for curve in curves])
+        # grinded_coordinates[i] = sum_
+        """
+        grinded_coordinates[i] = sum([curve.get_coordinate(grind_levels[j] * i / segments)
+                                      for j, curve in enumerate(curves)])
+        unground_coordinates[i] = sum([curve.get_coordinate(grind_levels[j] + (1 - grind_levels[j]) * i / segments)
+                                       for j, curve in enumerate(curves)])
+        """
         first_index = int(first_grinded.shape[0] * (i - 1) / segments)
         second_index = int(second_grinded.shape[0] * (i - 1) / segments)
 
-        grinded_coordinates[i] = (first_grinded[first_index] if first_grinded.shape[0] > 0 else np.zeros((1, 2))) + \
-                                 (second_grinded[second_index] if second_grinded.shape[0] > 0 else np.zeros((1, 2)))
+        grinded_coordinates[i] = (first_grinded[first_index] if first_grinded.shape[0] > 0 else zero) + \
+                                 (second_grinded[second_index] if second_grinded.shape[0] > 0 else zero)
 
         first_index = int((first_unground.shape[0]) * (i - 1) / segments)
         second_index = int((second_unground.shape[0]) * (i - 1) / segments)
         unground_coordinates[i] = first_unground[first_index] + second_unground[second_index]
+
     unground_coordinates[0] = grinded_coordinates[-1]
     return grinded_coordinates, unground_coordinates
 
@@ -184,5 +214,20 @@ def find_closest(values: list, query: float):
             right_index = middle_index
         else:
             left_index = middle_index
-    middle_index = (left_index + right_index) // 2
-    return middle_index, values[middle_index]
+    # print(left_index,right_index)
+
+    return left_index, values[left_index]
+
+
+def lerp(a, b, p, x=1, y=0):
+    """Calculates the t value that result in p when interpolating a and b and interpolates x and y by the same t value
+
+    :param a: first value
+    :param b: second value
+    :param p: interpolated value between a and b
+    :param x: first value that will be interpolated
+    :param y: second value that will be interpolated
+    :return: x and y interpolated by t. In the case that x=1 and y=0 t is returned
+    """
+    t = (p - a) / (b - a)
+    return x * t + y * (1 - t)
