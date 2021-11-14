@@ -140,9 +140,28 @@ def add_curves(curves: List['BezierCurve'], grind_levels: list = None, segments=
     elif len(grind_levels) == 2:
         grind_levels.append(0)
     elif len(grind_levels) == 3:
-        #grind_levels[2] = min(2 - (grind_levels[0]+grind_levels[1]),grind_levels[2])
-        grind_levels[0] += grind_levels[2]/2
-        grind_levels[1] += grind_levels[2]/2
+        # grind_levels[2] = min(2 - (grind_levels[0]+grind_levels[1]),grind_levels[2])
+
+        if grind_levels[0] == 1:
+            speed_0 = 0
+            speed_1 = 1
+        elif grind_levels[1] == 1:
+            speed_0 = 1
+            speed_1 = 0
+        elif grind_levels[0] <= grind_levels[1]:
+            speed_1 = 1
+            speed_0 = (1-grind_levels[0])/(1-grind_levels[1])
+        else:
+            speed_0 = 1
+            speed_1 = (1 - grind_levels[1]) / (1 - grind_levels[0])
+
+
+        grind_levels[0] += grind_levels[2]* speed_0
+        grind_levels[1] += grind_levels[2]* speed_1
+
+        grind_levels[0] = min(grind_levels[0], 1)
+        grind_levels[1] = min(grind_levels[1], 1)
+        """
         if grind_levels[0]>1 and grind_levels[1]>1:
             grind_levels[0] = 1
             grind_levels[1] = 1
@@ -154,7 +173,7 @@ def add_curves(curves: List['BezierCurve'], grind_levels: list = None, segments=
             overgrinded = grind_levels[1] - 1
             grind_levels[0] = min(grind_levels[0]+overgrinded, 1)
             grind_levels[1] = 1
-
+        """
 
     first_grinded, first_unground = curves[0].get_grind_path(grind_levels[0])
     second_grinded, second_unground = curves[1].get_grind_path(grind_levels[1])

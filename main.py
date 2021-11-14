@@ -111,7 +111,7 @@ if __name__ == '__main__':
 
     combined_slider = QtWidgets.QSlider(QtCore.Qt.Orientation.Horizontal)
     combined_slider.setMinimum(0)
-    combined_slider.setMaximum(200)
+    combined_slider.setMaximum(100)
     combined_slider.setValue(0)
     combined_slider.valueChanged.connect(
         lambda x: update_graph(plot_widget, combined_grind=x / 100))
@@ -125,4 +125,4 @@ if __name__ == '__main__':
     window.show()
 
     if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
-        QtGui.QApplication.instance().exec_()
+        QtGui.QGuiApplication.instance().exec_()
