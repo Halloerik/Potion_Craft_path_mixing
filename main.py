@@ -81,9 +81,8 @@ def update_graph(plot_widget, segments=100, **kwargs):
                             segments=segments, color=(0, 0, 0))
 
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
 
+def main():
     app = pg.mkQApp()
 
     window = QtWidgets.QWidget()
@@ -126,3 +125,6 @@ if __name__ == '__main__':
 
     if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
         QtGui.QGuiApplication.instance().exec_()
+
+if __name__ == '__main__':
+    main()

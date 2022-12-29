@@ -150,14 +150,13 @@ def add_curves(curves: List['BezierCurve'], grind_levels: list = None, segments=
             speed_1 = 0
         elif grind_levels[0] <= grind_levels[1]:
             speed_1 = 1
-            speed_0 = (1-grind_levels[0])/(1-grind_levels[1])
+            speed_0 = (1 - grind_levels[0]) / (1 - grind_levels[1])
         else:
             speed_0 = 1
             speed_1 = (1 - grind_levels[1]) / (1 - grind_levels[0])
 
-
-        grind_levels[0] += grind_levels[2]* speed_0
-        grind_levels[1] += grind_levels[2]* speed_1
+        grind_levels[0] += grind_levels[2] * speed_0
+        grind_levels[1] += grind_levels[2] * speed_1
 
         grind_levels[0] = min(grind_levels[0], 1)
         grind_levels[1] = min(grind_levels[1], 1)
